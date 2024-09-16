@@ -2,6 +2,8 @@
 #define DATABASE_INCLUDE_DATABASE_HPP
 
 #include <vector>
+#include <memory>
+#include "database/include/uids.hpp"
 #include "object.hpp"
 
 
@@ -13,36 +15,65 @@ class Tuple;
 class Database : public Object { 
   Database(char obj_name); 
 
-  char object_name;
-  std::vector<Tablespace> tablespaces_;
+
+  std::vector<std::unique_ptr<Tablespace>> tablespaces_;
+
+  void block_from_below(Transaction& transaction, LockType lock_type) override;
+  void block_from_above(Transaction& transaction, LockType lock_type) override;
+
+public: 
+
+  void block(Transaction& transaction, LockType lock_type) override;
 
 };
 
 
 class Tablespace : public Object { 
-  Tablespace(Database* database); 
+  Tablespace(char obj_name, Database* database); 
 
-  char object_name;
+  Database* database_;
 
-  std::vector<Page> pages_;
 
+  std::vector<std::unique_ptr<Page>> pages_;
+
+  void block_from_below(Transaction& transaction, LockType lock_type) override;
+  void block_from_above(Transaction& transaction, LockType lock_type) override;
+
+public:
+
+
+  void block(Transaction& transaction, LockType lock_type) override;
 };
 
 
 class Page : public Object { 
-  Page(Tablespace* tablespace); 
+  Page(char obj_name, Tablespace* tablespace); 
 
-  char object_name;
+  Tablespace* tablespace_;
 
-  std::vector<Tuple> tuples_;
 
+  std::vector<std::unique_ptr<Tuple>> tuples_;
+
+  void block_from_below(Transaction& transaction, LockType lock_type) override;
+  void block_from_above(Transaction& transaction, LockType lock_type) override;
+
+public:
+
+  void block(Transaction& transaction, LockType lock_type) override;
 };
 
 
 class Tuple : public Object{ 
-  Tuple(Page* page); 
+  Tuple(char obj_name, Page* page); 
 
-  char object_name;
+  Page * page_;
+
+  void block_from_below(Transaction& transaction, LockType lock_type) override;
+  void block_from_above(Transaction& transaction, LockType lock_type) override;
+
+public:
+
+  void block(Transaction& transaction, LockType lock_type) override;
 
 };
 

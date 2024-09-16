@@ -2,7 +2,7 @@
 
 Object::Object(char obj_name) : object_name_{obj_name} {
 
-  object_lock_info_.fill(false);
+  object_lock_info_.fill(LockStatus::Open);
 }
 
 

@@ -19,7 +19,7 @@ Tuple::Tuple(char obj_name, Page* page) : Object{obj_name}, page_{page} {}
 
 void Database::block_from_below(Transaction& transaction, LockType lock_type) {
 
-  // Só vai entrar aqui se o bloqueio puder ser concedido. Podemos fazer uma função em object chamada CanBlock? ou algo do tipo, que retorna true or false caso seja possível realizar o bloqueio.
+  // Só vai entrar aqui se o bloqueio puder ser concedido. A verificação será aqui? Provavelmente fica melhor dentro do próprio escalonador.
 
   object_lock_info_[lock_type] = true;
 

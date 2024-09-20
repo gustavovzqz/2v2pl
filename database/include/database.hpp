@@ -14,10 +14,7 @@ class Tuple;
 
 class Database : public Object { 
 
-
   std::vector<std::unique_ptr<Tablespace>> tablespaces_;
-
-
 
 public:
 
@@ -32,8 +29,6 @@ public:
 class Tablespace : public Object { 
 
   Database* database_;
-
-
   std::vector<std::unique_ptr<Page>> pages_;
 
 public:
@@ -48,8 +43,6 @@ public:
 class Page : public Object { 
 
   Tablespace* tablespace_;
-
-
   std::vector<std::unique_ptr<Tuple>> tuples_;
 
 public:
@@ -65,7 +58,6 @@ public:
 class Tuple : public Object{ 
 
   Page * page_;
-
 
 public:
 

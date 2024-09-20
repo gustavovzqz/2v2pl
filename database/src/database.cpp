@@ -177,6 +177,25 @@ void Tuple::block(Transaction& transaction, LockType lock_request) {
 
 }
 
+// "Add" functions
+
+void Database::add_tablespace(Tablespace* tablespace) {
+    if (tablespace) {
+        tablespaces_.push_back(tablespace);
+    }
+}
+
+void Tablespace::add_page(Page* page) {
+    if (page) {
+        pages_.push_back(page);
+    }
+}
+
+void Page::add_tuple(Tuple* tuple) {
+    if (tuple) {
+        tuples_.push_back(tuple);
+    }
+}
 
 
 

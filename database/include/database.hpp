@@ -2,7 +2,6 @@
 #define DATABASE_INCLUDE_DATABASE_HPP
 
 #include <vector>
-#include <memory>
 #include "lock_types.hpp"
 #include "object.hpp"
 
@@ -14,7 +13,7 @@ class Tuple;
 
 class Database : public Object { 
 
-  std::vector<std::unique_ptr<Tablespace>> tablespaces_;
+  std::vector<Tablespace*> tablespaces_;
 
 public:
 
@@ -22,6 +21,7 @@ public:
   void block_from_below(Transaction& transaction, LockType lock_type) override;
   void block_from_above(Transaction& transaction, LockType lock_type) override;
   void block(Transaction& transaction, LockType lock_type) override;
+  void add_tablespace(Tablespace* tablespace);
 
 };
 
@@ -29,7 +29,7 @@ public:
 class Tablespace : public Object { 
 
   Database* database_;
-  std::vector<std::unique_ptr<Page>> pages_;
+  std::vector<Page*> pages_;
 
 public:
 
@@ -37,13 +37,15 @@ public:
   void block_from_below(Transaction& transaction, LockType lock_type) override;
   void block_from_above(Transaction& transaction, LockType lock_type) override;
   void block(Transaction& transaction, LockType lock_type) override;
+  void add_page(Page* page);
+
 };
 
 
 class Page : public Object { 
 
   Tablespace* tablespace_;
-  std::vector<std::unique_ptr<Tuple>> tuples_;
+  std::vector<Tuple*> tuples_;
 
 public:
 
@@ -51,6 +53,8 @@ public:
   void block_from_below(Transaction& transaction, LockType lock_type) override;
   void block_from_above(Transaction& transaction, LockType lock_type) override;
   void block(Transaction& transaction, LockType lock_type) override;
+  void add_tuple(Tuple* tuple);
+
 
 };
 

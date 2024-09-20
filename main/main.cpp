@@ -4,28 +4,32 @@
 
 int main() {
   Database banco{'X'}; 
-
   Tablespace tabela{'A', &banco};
-
   Page pagina{'B', &tabela}; 
-
   Tuple tupla{'C', &pagina};
 
+  banco.add_tablespace(&tabela);
+  tabela.add_page(&pagina);
+  pagina.add_tuple(&tupla);
+
+  
+
   Transaction T1{0};
-  Transaction T2{1};
 
 
-  tupla.block(T1, WRITE_LOCK);
-  tupla.block(T2, WRITE_LOCK);
+  banco.block(T1, WRITE_LOCK);
 
-  tupla.print_lock_info();
+  auto x = banco.get_pending_transactions(1, CERTIFY_LOCK);
 
-  std::cout << "Fezes\n";
+  for (const auto& transaction : x) {
+      std::cout << transaction << std::endl;
+  }
 
-  T1.abort();
-  T2.abort();
+  //banco.print_lock_info();
 
-  tupla.print_lock_info();
+  std::cout << "mensagem\n";
+
+  //tabela.print_lock_info();
 
   
 

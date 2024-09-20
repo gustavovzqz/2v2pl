@@ -1,30 +1,25 @@
 #ifndef DATABASE_INCLUDE_TRANSACTION_HPP
 #define DATABASE_INCLUDE_TRANSACTION_HPP
 
-#include "uids.hpp"
 #include <vector>
+#include <unordered_set>
 
-struct BlockInformation {
 
-  bool * block_value; 
-  LockType lock_type;
-
-  public:
-  BlockInformation(bool* block_value, LockType lock_type);
-
-};
-
+class Object;
 
 class Transaction {
 
-  std::vector<BlockInformation> block_info_;
+  std::vector<Object*> objects_;
 
+  int transaction_id_;
 
   public:
-  
-  void abort_transaction(); 
-  void upgrade_write_to_certify();
-  void push_block_info(BlockInformation block_info);
+
+  Transaction(int id);
+  void abort(); 
+  std::unordered_set<int> upgrade_write_to_certify();
+  void push_object_info(Object* block_info);
+  int get_id();
 
 };
 

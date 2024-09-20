@@ -12,5 +12,5 @@ Se um commit chegar, precisaremos converter os bloqueios de escrita em certify l
 
 Se um abort tiver que ser realizado, precisaremos liberar todos os bloqueios da transação abortada, isso também será feito usando o vetor na transação.
 
-
+Quando uma transação espera, outras transações ainda podem ser escalonadas, para isso serve o grafo de espera!
 

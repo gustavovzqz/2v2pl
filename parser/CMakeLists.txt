@@ -9,3 +9,5 @@ SET(SOURCES
 )
 
 add_library(parser ${SOURCES} ${HEADERS})
+
+target_link_libraries(parser database)

@@ -1,6 +1,7 @@
 #include "database/include/transaction.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <unordered_set>
 
 #include "database/include/object.hpp"

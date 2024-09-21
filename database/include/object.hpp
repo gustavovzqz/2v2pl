@@ -2,6 +2,7 @@
 #define DATABASE_INCLUDE_OBJECT_HPP
 
 #include <array>
+#include <map>
 #include <unordered_set>
 
 #include "lock_types.hpp"
@@ -30,5 +31,7 @@ class Object {
 
   char get_object_name();
 };
+
+std::map<char, Object*> get_object_map(std::vector<Object*> object_vec);
 
 #endif

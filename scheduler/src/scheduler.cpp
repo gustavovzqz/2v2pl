@@ -21,6 +21,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
   WaitGraph wait_graph{static_cast<int>(transactions_.size())};
   std::list<Operation> waiting_operations;
   std::list<Operation> output_schedule;
+  std::list<Operation>::iterator insert_position;
 
   std::ofstream output_file("schedule_output.txt");
   if (!output_file) {
@@ -38,8 +39,11 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
          op != waiting_operations.end();) {
       if (!wait_graph.is_waiting(op->get_transaction_id())) {
         current_op = *op;
-        op = waiting_operations.erase(op);
+        insert_position = waiting_operations.erase(op);
+
         choosed_by_waiting = true;
+        output_file << "Transação removida da lista de espera" << std::endl;
+
         break;
       } else {
         ++op;
@@ -70,7 +74,13 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
       auto pending_transactions =
           current_transaction->upgrade_write_to_certify();
       if (!pending_transactions.empty()) {
-        waiting_operations.push_back(current_op);
+        // Caso tenhha vindo da lista de espera, precisa voltar para a mesma
+        // posição
+        if (choosed_by_waiting) {
+          waiting_operations.insert(insert_position, current_op);
+        } else {
+          waiting_operations.push_back(current_op);
+        }
         output_file << "Operação " << current_op.get_operation_name()
                     << " está aguardando devido a um bloqueio." << std::endl;
 
@@ -109,7 +119,13 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
 
         output_schedule.push_back(current_op);
       } else {
-        waiting_operations.push_back(current_op);
+        // Caso tenhha vindo da lista de espera, precisa voltar para a mesma
+        // posição
+        if (choosed_by_waiting) {
+          waiting_operations.insert(insert_position, current_op);
+        } else {
+          waiting_operations.push_back(current_op);
+        }
         output_file << "Operação " << current_op.get_operation_name()
                     << " está aguardando." << std::endl;
 

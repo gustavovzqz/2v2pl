@@ -32,7 +32,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
 
   while (!operations_.empty() || !waiting_operations.empty()) {
     Operation current_op;
-    bool choosen_by_waiting{false};
+    bool chosen_by_waiting{false};
 
     for (auto op = waiting_operations.begin();
          op != waiting_operations.end();) {
@@ -40,7 +40,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
         current_op = *op;
         insert_position = waiting_operations.erase(op);
 
-        choosen_by_waiting = true;
+        chosen_by_waiting = true;
         output_file << "Transação removida da lista de espera" << std::endl;
 
         break;
@@ -49,7 +49,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
       }
     }
 
-    if (!choosen_by_waiting) {
+    if (!chosen_by_waiting) {
       current_op = operations_.front();
       operations_.pop_front();
     }
@@ -75,7 +75,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
       if (!pending_transactions.empty()) {
         // Caso tenhha vindo da lista de espera, precisa voltar para a mesma
         // posição
-        if (choosen_by_waiting) {
+        if (chosen_by_waiting) {
           waiting_operations.insert(insert_position, current_op);
         } else {
           waiting_operations.push_back(current_op);
@@ -120,7 +120,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
       } else {
         // Caso tenhha vindo da lista de espera, precisa voltar para a mesma
         // posição
-        if (choosen_by_waiting) {
+        if (chosen_by_waiting) {
           waiting_operations.insert(insert_position, current_op);
         } else {
           waiting_operations.push_back(current_op);

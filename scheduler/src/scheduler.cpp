@@ -5,14 +5,13 @@
 #include "scheduler/include/wait_graph.hpp"
 
 Scheduler::Scheduler(std::list<Operation> operations,
-                     std::vector<Transaction*> transactions,
-                     std::map<char, Object*> object_map)
-    : operations_{operations},
-      transactions_{transactions},
+                     std::vector<Transaction *> transactions,
+                     std::map<char, Object *> object_map)
+    : operations_{operations}, transactions_{transactions},
       object_map_{object_map} {}
 
-void clean_list(std::list<Operation>& operations, int transaction_id) {
-  operations.remove_if([transaction_id](const Operation& op) {
+void clean_list(std::list<Operation> &operations, int transaction_id) {
+  operations.remove_if([transaction_id](const Operation &op) {
     return op.get_transaction_id() == transaction_id;
   });
 }
@@ -33,7 +32,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
 
   while (!operations_.empty() || !waiting_operations.empty()) {
     Operation current_op;
-    bool choosed_by_waiting{false};
+    bool choosen_by_waiting{false};
 
     for (auto op = waiting_operations.begin();
          op != waiting_operations.end();) {
@@ -41,7 +40,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
         current_op = *op;
         insert_position = waiting_operations.erase(op);
 
-        choosed_by_waiting = true;
+        choosen_by_waiting = true;
         output_file << "Transação removida da lista de espera" << std::endl;
 
         break;
@@ -50,7 +49,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
       }
     }
 
-    if (!choosed_by_waiting) {
+    if (!choosen_by_waiting) {
       current_op = operations_.front();
       operations_.pop_front();
     }
@@ -60,7 +59,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
 
     char object_name = current_op.get_object_name();
     int transaction_id = current_op.get_transaction_id();
-    Transaction* current_transaction = transactions_[transaction_id];
+    Transaction *current_transaction = transactions_[transaction_id];
     LockType lock_request = current_op.get_lock_request();
 
     if (wait_graph.is_waiting(transaction_id)) {
@@ -76,7 +75,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
       if (!pending_transactions.empty()) {
         // Caso tenhha vindo da lista de espera, precisa voltar para a mesma
         // posição
-        if (choosed_by_waiting) {
+        if (choosen_by_waiting) {
           waiting_operations.insert(insert_position, current_op);
         } else {
           waiting_operations.push_back(current_op);
@@ -106,7 +105,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
         wait_graph.remove_node(transaction_id);
       }
     } else {
-      Object* object_to_block = object_map_[object_name];
+      Object *object_to_block = object_map_[object_name];
       auto pending_transactions =
           object_to_block->get_incompatible_transactions(transaction_id,
                                                          lock_request);
@@ -121,7 +120,7 @@ std::list<Operation> Scheduler::get_2v2pl_schedule() {
       } else {
         // Caso tenhha vindo da lista de espera, precisa voltar para a mesma
         // posição
-        if (choosed_by_waiting) {
+        if (choosen_by_waiting) {
           waiting_operations.insert(insert_position, current_op);
         } else {
           waiting_operations.push_back(current_op);
